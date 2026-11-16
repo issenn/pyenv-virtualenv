@@ -205,14 +205,14 @@ if zmodload -F zsh/stat b:zstat 2>/dev/null; then
   _pyenv_vh_mtimes() {
     local -a _m
     builtin zstat -A _m +mtime -- \${^_PYENV_VH_PATHS}(N) 2>/dev/null
-    _PYENV_VH_MTIMES="\${(j: :)_m}"
+    REPLY="\${(j: :)_m}"
   }
 else
 EOS
     fi
   cat <<EOS
   _pyenv_vh_mtimes() {
-    _PYENV_VH_MTIMES="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
+    REPLY="\$(command stat ${_stat_fmt} "\${_PYENV_VH_PATHS[@]}" 2>/dev/null)"
   }
 EOS
     if [[ $shell == "zsh" ]]; then
@@ -235,7 +235,7 @@ EOS
     fi
     if [ "${PWD}" = "${_PYENV_VH_PWD-}" ]; then
       _pyenv_vh_mtimes
-      if [ "${_PYENV_VH_MTIMES-}" = "${_PYENV_VH_MTIMES_PREV-}" ]; then
+      if [ "${REPLY-}" = "${_PYENV_VH_MTIMES-}" ]; then
         return $ret
       fi
     fi
@@ -276,7 +276,7 @@ EOS
     _PYENV_VH_PATHS+=("${PYENV_ROOT}/version")
   fi
   _pyenv_vh_mtimes
-  _PYENV_VH_MTIMES_PREV="${_PYENV_VH_MTIMES-}"
+  _PYENV_VH_MTIMES="${REPLY-}"
 EOS
   fi
 
